@@ -1,11 +1,12 @@
 #include "Application.h"
 
-Application::Application() : event(std::make_unique<sf::Event>())
+namespace mini2d
 {
-    settings = std::make_unique<sf::ContextSettings>();
-    settings->antialiasingLevel = 0;
+Application::Application()
+{
+    settings.antialiasingLevel = 0;
 
-    window = std::make_unique<sf::RenderWindow>(sf::VideoMode(1440, 900), "Mini 2d engine", sf::Style::Default, *settings);
+    window = std::make_unique<sf::RenderWindow>(sf::VideoMode(1440, 900), "Mini 2d engine", sf::Style::Default, settings);
     window->setVerticalSyncEnabled(true);
     window->setFramerateLimit(300);
 }
@@ -25,10 +26,10 @@ void Application::run()
 
 void Application::processEvents()
 {
-    while (window->pollEvent(*event))
+    while (window->pollEvent(event))
     {
-        ImGui::SFML::ProcessEvent(*event);
-        switch (event->type)
+        ImGui::SFML::ProcessEvent(event);
+        switch (event.type)
         {
         case sf::Event::Closed:
         {
@@ -59,4 +60,5 @@ void Application::render()
     window->draw(shape);
     ImGui::SFML::Render(*window);
     window->display();
+}
 }

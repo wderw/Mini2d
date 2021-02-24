@@ -10,6 +10,8 @@
 #include <imgui-SFML.h>
 #include <Windows.h>
 
+namespace mini2d
+{
 class Application
 {
 public:
@@ -20,9 +22,10 @@ private:
     void processEvents();
     void render();
 
-    std::unique_ptr<sf::ContextSettings> settings;
     std::unique_ptr<sf::RenderWindow> window;
-    std::unique_ptr<sf::Event> event;
+    sf::ContextSettings settings;
+    sf::Event event;
     sf::Clock deltaClock;
     sf::CircleShape shape{ 100.f };
 };
+}
