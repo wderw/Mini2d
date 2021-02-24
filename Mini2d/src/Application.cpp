@@ -45,6 +45,14 @@ void Application::render()
     ImGui::SFML::Update(*window, deltaClock.restart());
     ImGui::Begin("Hello, world!");
     ImGui::Button("Look at this pretty button");
+    ImGui::Button("Look at this pretty button2");
+    ImGui::End();
+
+    ImGui::Begin("Development");
+    float translation;
+    ImGui::SliderFloat2("position", &translation, -1.0, 1.0);
+    static float color[4] = { 1.0f,1.0f,1.0f,1.0f };
+    ImGui::ColorEdit3("color", color);
     ImGui::End();
 
     window->clear();
