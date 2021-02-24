@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+namespace mini2d
+{
 class Vector2
 {
 public:
@@ -35,3 +37,4 @@ public:
 
     double x, y;
 };
+}

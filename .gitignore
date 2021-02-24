@@ -9,3 +9,5 @@ x86/
 *.sln.docstates
 *.userprefs
 
+# saved size of imgui window from last run
+Mini2d/imgui.ini
