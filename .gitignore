@@ -1,3 +1,10 @@
 .vs/
 x64/
 x86/
+
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
