@@ -18,7 +18,7 @@ void Application::initialize()
 {
     Logger::Initialize();
     ImGui::SFML::Init(*window);
-    LOG_INFO("ImGui is ON.");
+    LOG_INFO("ImGui initialized.");
 
     srand(time(0)); LOG_WARN("Seed not set!");
     //const int seed = 1234; srand(seed); LOG_INFO("Seed is: {}", seed);
@@ -56,6 +56,18 @@ void Application::finalize()
     ImGui::SFML::Shutdown();
 }
 
+void Application::zoomViewAt(sf::Vector2i pixel, sf::RenderWindow& window, float zoom)
+{
+    const sf::Vector2f beforeCoord{ window.mapPixelToCoords(pixel) };
+    sf::View view{ window.getView() };
+    view.zoom(zoom);
+    window.setView(view);
+    const sf::Vector2f afterCoord{ window.mapPixelToCoords(pixel) };
+    const sf::Vector2f offsetCoords{ beforeCoord - afterCoord };
+    view.move(offsetCoords);
+    window.setView(view);
+}
+
 void Application::processEvents()
 {
     while (window->pollEvent(event))
@@ -70,9 +82,19 @@ void Application::processEvents()
         }
         case sf::Event::Resized:
         {
-            // update the view to the new size of the window
+            LOG_INFO("Updating the view to the new size of the window");
+
             sf::FloatRect visibleArea(0.f, 0.f, event.size.width, event.size.height);
             window->setView(sf::View(visibleArea));
+            break;
+        }
+        case sf::Event::MouseWheelScrolled:
+        {
+            if (event.mouseWheelScroll.delta > 0)
+                zoomViewAt({ event.mouseWheelScroll.x, event.mouseWheelScroll.y }, *window, (1.f / 1.1f));
+            else if (event.mouseWheelScroll.delta < 0)
+                zoomViewAt({ event.mouseWheelScroll.x, event.mouseWheelScroll.y }, *window, 1.1f);
+            break;
         }
         default: { break; }
         }

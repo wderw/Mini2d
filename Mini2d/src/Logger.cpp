@@ -11,6 +11,6 @@ void Logger::Initialize()
     logger = spdlog::stdout_color_mt("APP");
     logger->set_level(spdlog::level::trace);
 
-    LOG_INFO("Spdlog is ON.");
+    LOG_INFO("Spdlog initialized.");
 }
 }

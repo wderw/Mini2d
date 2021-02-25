@@ -20,6 +20,7 @@ public:
 private:
     void initialize();
     void finalize();
+    void zoomViewAt(sf::Vector2i pixel, sf::RenderWindow& window, float zoom);
     void processEvents();
     void updateGui();
     void render();
