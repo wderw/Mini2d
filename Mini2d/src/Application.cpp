@@ -18,6 +18,7 @@ void Application::run()
     while (window->isOpen())
     {
         processEvents();
+        updateGui();
         render();
     }
 
@@ -41,7 +42,7 @@ void Application::processEvents()
     }
 }
 
-void Application::render()
+void Application::updateGui()
 {
     ImGui::SFML::Update(*window, deltaClock.restart());
     ImGui::Begin("Hello, world!");
@@ -55,10 +56,15 @@ void Application::render()
     static float color[4] = { 1.0f,1.0f,1.0f,1.0f };
     ImGui::ColorEdit3("color", color);
     ImGui::End();
+}
 
-    window->clear();
+void Application::render()
+{
+    window->clear(sf::Color(25,25,25,255));
+
     window->draw(shape);
     ImGui::SFML::Render(*window);
+
     window->display();
 }
 }

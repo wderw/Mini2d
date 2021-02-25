@@ -20,6 +20,7 @@ public:
 
 private:
     void processEvents();
+    void updateGui();
     void render();
 
     std::unique_ptr<sf::RenderWindow> window;
