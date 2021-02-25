@@ -19,6 +19,8 @@ public:
     void run();
 
 private:
+    void initialize();
+    void finalize();
     void processEvents();
     void updateGui();
     void render();

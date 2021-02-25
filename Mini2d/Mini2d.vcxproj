@@ -55,7 +55,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\libraries\SFML-2.5.1\include;$(ProjectDir)\libraries\imgui-sfml-2.2;$(ProjectDir)\libraries\imgui-1.81</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\libraries\SFML-2.5.1\include;$(ProjectDir)\libraries\imgui-sfml-2.2;$(ProjectDir)\libraries\imgui-1.81;$(ProjectDir)\libraries\spdlog\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -72,7 +72,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\libraries\SFML-2.5.1\include;$(ProjectDir)\libraries\imgui-sfml-2.2;$(ProjectDir)\libraries\imgui-1.81</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\libraries\SFML-2.5.1\include;$(ProjectDir)\libraries\imgui-sfml-2.2;$(ProjectDir)\libraries\imgui-1.81;$(ProjectDir)\libraries\spdlog\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -90,11 +90,13 @@
     <ClCompile Include="libraries\imgui-1.81\imgui_tables.cpp" />
     <ClCompile Include="libraries\imgui-1.81\imgui_widgets.cpp" />
     <ClCompile Include="libraries\imgui-sfml-2.2\imgui-SFML.cpp" />
+    <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Logger.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Vector2.h" />
   </ItemGroup>

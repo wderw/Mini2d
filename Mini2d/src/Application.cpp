@@ -1,4 +1,6 @@
 #include "Application.h"
+#include "Logger.h"
+#include <random>
 
 namespace mini2d
 {
@@ -11,9 +13,19 @@ Application::Application()
     window->setFramerateLimit(300);
 }
 
+void Application::initialize()
+{
+    Logger::Initialize();
+    ImGui::SFML::Init(*window);
+    LOG_INFO("ImGui is ON.");
+
+    srand(time(0)); LOG_WARN("Seed not set!");
+    //const int seed = 1234; srand(seed); LOG_INFO("Seed is: {}", seed);
+}
+
 void Application::run()
 {
-    ImGui::SFML::Init(*window);
+    initialize();
 
     while (window->isOpen())
     {
@@ -22,6 +34,12 @@ void Application::run()
         render();
     }
 
+    finalize();
+}
+
+void Application::finalize()
+{
+    LOG_DEBUG("Shutting down.");
     ImGui::SFML::Shutdown();
 }
 
@@ -44,6 +62,9 @@ void Application::processEvents()
 
 void Application::updateGui()
 {
+    static int clickCount;
+    static float translation = 0;
+
     ImGui::SFML::Update(*window, deltaClock.restart());
     ImGui::Begin("Hello, world!");
     ImGui::Button("Look at this pretty button");
@@ -51,10 +72,9 @@ void Application::updateGui()
     ImGui::End();
 
     ImGui::Begin("Development");
-    float translation;
-    ImGui::SliderFloat2("position", &translation, -1.0, 1.0);
-    static float color[4] = { 1.0f,1.0f,1.0f,1.0f };
-    ImGui::ColorEdit3("color", color);
+    ImGui::SliderFloat2("position", &translation, -1.0f, 1.0f);
+    static float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    ImGui::ColorEdit3("Background", color);
     ImGui::End();
 }
 
