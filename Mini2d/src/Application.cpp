@@ -1,6 +1,5 @@
 #include "Application.h"
 #include "Logger.h"
-#include <random>
 
 namespace mini2d
 {
@@ -11,6 +10,8 @@ Application::Application()
     window = std::make_unique<sf::RenderWindow>(sf::VideoMode(1440, 900), "Mini 2d engine", sf::Style::Default, settings);
     window->setVerticalSyncEnabled(true);
     window->setFramerateLimit(300);
+    window->setView(sf::View({0, 0, static_cast<float>(window->getSize().x),
+                                    static_cast<float>(window->getSize().y)}));
 }
 
 void Application::initialize()
@@ -21,6 +22,18 @@ void Application::initialize()
 
     srand(time(0)); LOG_WARN("Seed not set!");
     //const int seed = 1234; srand(seed); LOG_INFO("Seed is: {}", seed);
+
+    const int pointCount = 100000;
+    LOG_INFO("pointCount: {}", pointCount);
+
+    vertices.reserve(pointCount);
+    for (int i = 0; i < pointCount; ++i)
+    {
+        double quake = static_cast <double> (rand()) / static_cast <double> (RAND_MAX);
+        sf::Vertex v(sf::Vector2f(rand() % ((int)window->getSize().x - 120) + 60 + quake,
+            rand() % ((int)window->getSize().y - 120) + 60 + quake), sf::Color(rand() % 255, rand() % 255, rand() % 255, 255));
+        vertices.emplace_back(v);
+    }
 }
 
 void Application::run()
@@ -55,6 +68,12 @@ void Application::processEvents()
             window->close();
             break;
         }
+        case sf::Event::Resized:
+        {
+            // update the view to the new size of the window
+            sf::FloatRect visibleArea(0.f, 0.f, event.size.width, event.size.height);
+            window->setView(sf::View(visibleArea));
+        }
         default: { break; }
         }
     }
@@ -66,24 +85,30 @@ void Application::updateGui()
     static float translation = 0;
 
     ImGui::SFML::Update(*window, deltaClock.restart());
-    ImGui::Begin("Hello, world!");
-    ImGui::Button("Look at this pretty button");
-    ImGui::Button("Look at this pretty button2");
-    ImGui::End();
 
-    ImGui::Begin("Development");
+    ImGui::Begin("Debug");
+
+    sf::Vector2i pixelPos = sf::Mouse::getPosition(*window);
+    sf::Vector2f worldPos = window->mapPixelToCoords(pixelPos);
+    ImGui::Text("pixel position (x: %d, y: %d)", pixelPos.x, pixelPos.y);
+    ImGui::Text("world position (x: %f, y: %f)", worldPos.x, worldPos.y);
+
     ImGui::SliderFloat2("position", &translation, -1.0f, 1.0f);
-    static float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    ImGui::ColorEdit3("Background", color);
+    static float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    ImGui::ColorEdit3("background color", color);
+
+    bgColor = sf::Color(color[0] * 255.f, color[1] * 255.f, color[2] * 255.f, color[3] * 255.f);
+
     ImGui::End();
 }
 
 void Application::render()
 {
-    window->clear(sf::Color(25,25,25,255));
+    window->clear(bgColor);
 
     window->draw(shape);
-    ImGui::SFML::Render(*window);
+    window->draw(&vertices[0], vertices.size(), sf::Points);
+    ImGui::SFML::Render(*window); // Imgui must be the last rendered item!
 
     window->display();
 }

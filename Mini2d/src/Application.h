@@ -8,7 +8,6 @@
 #include <SFML/Window/Event.hpp>
 #include <imgui.h>
 #include <imgui-SFML.h>
-#include <Windows.h>
 
 namespace mini2d
 {
@@ -29,6 +28,8 @@ private:
     sf::ContextSettings settings;
     sf::Event event;
     sf::Clock deltaClock;
-    sf::CircleShape shape{ 100.f };
+    sf::CircleShape shape{50.f};
+    std::vector<sf::Vertex> vertices{};
+    sf::Color bgColor{25, 25, 25, 255};
 };
 }
