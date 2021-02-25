@@ -1,0 +1,3 @@
+[submodule "Mini2d/libraries/spdlog"]
+	path = Mini2d/libraries/spdlog
+	url = https://github.com/gabime/spdlog.git
