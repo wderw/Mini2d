@@ -56,6 +56,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)\libraries\SFML-2.5.1\include;$(ProjectDir)\libraries\imgui-sfml-2.2;$(ProjectDir)\libraries\imgui-1.81;$(ProjectDir)\libraries\spdlog\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -73,6 +74,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)\libraries\SFML-2.5.1\include;$(ProjectDir)\libraries\imgui-sfml-2.2;$(ProjectDir)\libraries\imgui-1.81;$(ProjectDir)\libraries\spdlog\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -94,11 +96,14 @@
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Vector2.cpp" />
+    <ClCompile Include="src\ViewController.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Config.h" />
     <ClInclude Include="src\Logger.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Vector2.h" />
+    <ClInclude Include="src\ViewController.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
