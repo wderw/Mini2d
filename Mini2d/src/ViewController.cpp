@@ -3,9 +3,7 @@
 
 namespace mini2d
 {
-ViewController::ViewController(sf::RenderTarget& window, Config& config) :
-    window{window},
-    config{config}
+ViewController::ViewController(sf::RenderTarget& window) : window{window}
 {
 }
 
@@ -43,6 +41,5 @@ void ViewController::resetView()
     sf::View view(visibleArea);
     view.zoom(1.0f);
     window.setView(view);
-    // TODO: implementation
 }
 }

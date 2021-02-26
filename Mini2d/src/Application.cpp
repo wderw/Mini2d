@@ -53,7 +53,7 @@ void Application::setupWindow()
     window->setView(sf::View({ 0, 0, static_cast<float>(window->getSize().x),
                                     static_cast<float>(window->getSize().y) }));
 
-    viewController = std::make_shared<ViewController>(*window, config);
+    viewController = std::make_shared<ViewController>(*window);
     LOG_INFO("Window setup done.");
 }
 
