@@ -49,11 +49,18 @@ void Application::prepareRng()
 
 void Application::setupWindow()
 {
-    glContextSettings.antialiasingLevel = 0;
+    glContextSettings.antialiasingLevel = config.get<int>("antialiasingLevel");
 
-    window = std::make_unique<sf::RenderWindow>(sf::VideoMode(1440, 900), "Mini 2d engine", sf::Style::Default, glContextSettings);
+    window = std::make_unique<sf::RenderWindow>(
+        sf::VideoMode(
+            config.get<int>("clientWidth"),
+            config.get<int>("clientHeight")),
+            "Mini 2d engine", sf::Style::Default,
+            glContextSettings
+        );
+
     window->setVerticalSyncEnabled(true);
-    window->setFramerateLimit(300);
+    window->setFramerateLimit(config.get<int>("framerateLimit"));
     window->setView(sf::View({ 0, 0, static_cast<float>(window->getSize().x),
                                     static_cast<float>(window->getSize().y) }));
 
@@ -72,8 +79,8 @@ void Application::loadConfig(const std::string& filename)
     }
     else
     {
-        LOG_WARN("Config file not found! Make sure {} is present in your directory: {}", filename, path);
-        loadConfigDefaults();
+        LOG_ERROR("Config file not found! Make sure {} is present in your directory: {}", filename, path);
+        throw std::runtime_error("Configuration file invalid!");
     }
 
     LOG_INFO("Config loaded.");
@@ -99,16 +106,6 @@ void Application::finalize()
     ImGui::SFML::Shutdown();
 }
 
-void Application::loadConfigDefaults()
-{
-    LOG_WARN("Loading default configuration.");
-
-    config.set("isRandom", true);
-    config.set("seed", 1234);
-    config.set("zoomMultiplier", 1.25f);
-    config.set("pointCount", 100000);
-}
-
 void Application::loadConfigFromFile(const std::string& filename)
 {
     auto configJson = Utils::loadTextFile(filename);
@@ -119,6 +116,10 @@ void Application::loadConfigFromFile(const std::string& filename)
     config.set("seed", parsedJson["seed"].int_value());
     config.set("zoomMultiplier", static_cast<float>(parsedJson["zoomMultiplier"].number_value()));
     config.set("pointCount", parsedJson["pointCount"].int_value());
+    config.set("framerateLimit", parsedJson["framerateLimit"].int_value());
+    config.set("clientWidth", parsedJson["clientWidth"].int_value());
+    config.set("clientHeight", parsedJson["clientHeight"].int_value());
+    config.set("antialiasingLevel", parsedJson["antialiasingLevel"].int_value());
 }
 
 void Application::processEvents()
@@ -170,7 +171,7 @@ void Application::render()
     window->clear(bgColor);
 
     window->draw(shape);
-    window->draw(&vertices[0], vertices.size(), sf::Points);
+    window->draw(&vertices[0], vertices.size(), sf::Lines);
     ImGui::SFML::Render(*window); // Imgui must be the last rendered item!
 
     window->display();
