@@ -1,3 +1,6 @@
 [submodule "Mini2d/libraries/spdlog"]
 	path = Mini2d/libraries/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "Mini2d/libraries/json11"]
+	path = Mini2d/libraries/json11
+	url = https://github.com/dropbox/json11.git
