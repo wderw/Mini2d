@@ -37,7 +37,8 @@ void Application::prepareRng()
 {
     if (config.get<bool>("isRandom"))
     {
-        srand(time(0)); LOG_WARN("Seed not set!");
+        srand(time(0)); 
+        LOG_WARN("Seed not set!");
     }
     else
     {
