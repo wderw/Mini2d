@@ -3,7 +3,10 @@
 
 namespace mini2d
 {
-ViewController::ViewController(sf::RenderTarget& window, Config& config) : window{window}, config{config}
+ViewController::ViewController(sf::RenderTarget& window, Config& config)
+:
+    window{window},
+    config{config}
 {
 }
 
@@ -39,7 +42,7 @@ void ViewController::processEvent(sf::Event& event)
         }
         case sf::Event::MouseMoved:
         {
-            if (isDragging)
+            if (isDragging())
             {
                 moveView((lastX - event.mouseMove.x) / getCurrentZoom(),
                          (lastY - event.mouseMove.y) / getCurrentZoom());
@@ -58,8 +61,9 @@ void ViewController::onResize(sf::Event& event)
         event.size.height);
 
     sf::FloatRect visibleArea(0.f, 0.f, event.size.width, event.size.height);
-    currentZoom = 100;
-    window.setView(sf::View(visibleArea));
+    sf::View view(visibleArea);
+    resetZoom(view);
+    window.setView(view);
 }
 
 void ViewController::onScroll(sf::Event& event, float zoomMultiplier)
@@ -78,12 +82,12 @@ void ViewController::onScroll(sf::Event& event, float zoomMultiplier)
 
 void ViewController::startDrag()
 {
-    isDragging = true;
+    drag = true;
 }
 
 void ViewController::stopDrag()
 {
-    isDragging = false;
+    drag = false;
 }
 
 void ViewController::zoomViewAt(sf::Vector2i pixel, float zoom)
@@ -111,12 +115,22 @@ void ViewController::saveLast(float lastX, float lastY)
     this->lastY = lastY;
 }
 
+void ViewController::resetZoom(sf::View& view)
+{
+    view.zoom(1.0f);
+    currentZoom = 1.0f;
+}
+
+bool ViewController::isDragging() const
+{
+    return drag;
+}
+
 void ViewController::resetView()
 {
     sf::FloatRect visibleArea(0.f, 0.f, window.getSize().x, window.getSize().y);
     sf::View view(visibleArea);
-    view.zoom(1.0f);
-    currentZoom = 1;
+    resetZoom(view);
     window.setView(view);
     LOG_DEBUG("Viewport reset.");
 }

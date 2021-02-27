@@ -4,7 +4,6 @@
 #include <SFML\Graphics\RenderWindow.hpp>
 #include <SFML\Window\Event.hpp>
 #include "Config.h"
-#include "Vector2.h"
 
 namespace mini2d
 {
@@ -24,8 +23,10 @@ private:
     void zoomViewAt(sf::Vector2i pixel, float zoom);
     void moveView(float x, float y);
     void saveLast(float lastX, float lastY);
+    void resetZoom(sf::View& view);
+    bool isDragging() const;
 
-    bool isDragging{false};
+    bool drag{false};
     float lastX{0};
     float lastY{0};
     float currentZoom{1.0f};
