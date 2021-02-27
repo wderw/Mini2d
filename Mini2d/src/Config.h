@@ -21,8 +21,15 @@ public:
     template <typename T>
     T get(const std::string& key) const
     {
-        LOG_TRACE("Trying to access value at: {}", key);
-        return std::any_cast<T>(config.at(key));
+        try
+        {
+            return std::any_cast<T>(config.at(key));
+        }
+        catch (std::exception& e)
+        {
+            LOG_ERROR("Bad any cast when trying to access: {}", key);
+            throw e;
+        }
     }
 
 private:

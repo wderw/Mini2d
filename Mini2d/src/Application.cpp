@@ -144,9 +144,6 @@ void Application::updateGui()
 {
     ImGui::SFML::Update(*window, deltaClock.restart());
 
-    static int clickCount;
-    static float translation = 0;
-
     ImGui::Begin("Viewport");
 
     sf::Vector2i pixelPos = sf::Mouse::getPosition(*window);
@@ -160,7 +157,6 @@ void Application::updateGui()
 
     ImGui::Text("Zoom: %f %", viewController->getCurrentZoom());
 
-    ImGui::SliderFloat2("position", &translation, -1.0f, 1.0f);
     static float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     ImGui::ColorEdit3("background color", color);
 

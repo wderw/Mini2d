@@ -56,7 +56,7 @@ void ViewController::processEvent(sf::Event& event)
 
 void ViewController::onResize(sf::Event& event)
 {
-    LOG_DEBUG("Updating viewport to new window size [W:{}, H:{}]",
+    LOG_DEBUG("Updating view to match new window size [W:{}, H:{}]",
         event.size.width,
         event.size.height);
 
