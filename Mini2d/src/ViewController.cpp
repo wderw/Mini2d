@@ -3,24 +3,48 @@
 
 namespace mini2d
 {
-ViewController::ViewController(sf::RenderTarget& window) : window{window}
+ViewController::ViewController(sf::RenderTarget& window, Config& config) : window{window}, config{config}
 {
+}
+
+void ViewController::processEvent(sf::Event& event)
+{
+    switch (event.type)
+    {
+        case sf::Event::Resized:
+        {
+            onResize(event);
+            break;
+        }
+        case sf::Event::MouseWheelScrolled:
+        {
+            onScroll(event, config.get<float>("zoomMultiplier"));
+            break;
+        }
+        default: { break; }
+    }
 }
 
 void ViewController::onResize(sf::Event& event)
 {
-    LOG_INFO("Updating viewport to new window size [W:{}, H:{}]", event.size.width, event.size.height);
+    LOG_DEBUG("Updating viewport to new window size [W:{}, H:{}]", event.size.width, event.size.height);
     sf::FloatRect visibleArea(0.f, 0.f, event.size.width, event.size.height);
+    currentZoomPercentage = 100;
     window.setView(sf::View(visibleArea));
 }
 
-void ViewController::zoomOnScroll(sf::Event& event, float zoomMultiplier)
+void ViewController::onScroll(sf::Event& event, float zoomMultiplier)
 {
     if (event.mouseWheelScroll.delta > 0)
+    {
         zoomViewAt({ event.mouseWheelScroll.x, event.mouseWheelScroll.y }, (1.f / zoomMultiplier));
+        currentZoomPercentage *= zoomMultiplier;
+    }
     else if (event.mouseWheelScroll.delta < 0)
+    {
         zoomViewAt({ event.mouseWheelScroll.x, event.mouseWheelScroll.y }, zoomMultiplier);
-
+        currentZoomPercentage *= (1.f / zoomMultiplier);
+    }
 }
 
 void ViewController::zoomViewAt(sf::Vector2i pixel, float zoom)
@@ -40,6 +64,12 @@ void ViewController::resetView()
     sf::FloatRect visibleArea(0.f, 0.f, window.getSize().x, window.getSize().y);
     sf::View view(visibleArea);
     view.zoom(1.0f);
+    currentZoomPercentage = 100;
     window.setView(view);
+    LOG_DEBUG("Viewport reset.");
+}
+float ViewController::getCurrentZoomPercentage() const
+{
+    return currentZoomPercentage;
 }
 }

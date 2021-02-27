@@ -7,9 +7,9 @@ std::shared_ptr<spdlog::logger> Logger::logger;
 
 void Logger::Initialize()
 {
-    spdlog::set_pattern("%^[%T] %n: %v%$");
+    spdlog::set_pattern("%^[%T] [%L]: %v%$");
     logger = spdlog::stdout_color_mt("APP");
-    logger->set_level(spdlog::level::trace);
+    logger->set_level(spdlog::level::debug);
 
     LOG_INFO("Spdlog initialized.");
 }

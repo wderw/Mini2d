@@ -1,6 +1,10 @@
+#include <fstream>
+#include <sstream>
+#include <filesystem>
 #include "Application.h"
 #include "Logger.h"
 #include "Config.h"
+#include "Utils.h"
 
 namespace mini2d
 {
@@ -8,7 +12,7 @@ namespace mini2d
 void Application::initialize()
 {
     Logger::Initialize();
-    loadConfig();
+    loadConfig("config.json");
     setupWindow();
 
     ImGui::SFML::Init(*window);
@@ -16,7 +20,7 @@ void Application::initialize()
 
     prepareRng();
 
-    const int pointCount = 1000000;
+    const int pointCount = config.get<unsigned>("pointCount");
     LOG_INFO("pointCount: {}", pointCount);
 
     vertices.reserve(pointCount);
@@ -53,15 +57,24 @@ void Application::setupWindow()
     window->setView(sf::View({ 0, 0, static_cast<float>(window->getSize().x),
                                     static_cast<float>(window->getSize().y) }));
 
-    viewController = std::make_shared<ViewController>(*window);
+    viewController = std::make_shared<ViewController>(*window, config);
     LOG_INFO("Window setup done.");
 }
 
-void Application::loadConfig()
+void Application::loadConfig(const std::string& filename)
 {
-    config.set("isRandom", true);
-    config.set("seed", 1234);
-    config.set("zoomMultiplier", 1.1f);
+    loadConfigDefaults();
+
+    LOG_DEBUG("Current program path: {}", std::filesystem::current_path().string());
+    if (std::filesystem::exists(filename))
+    {
+        LOG_DEBUG("Config file found.");
+        loadConfigFromFile(filename);
+    }
+    else
+    {
+        LOG_WARN("Config file not found!");
+    }
 
     LOG_INFO("Config loaded.");
 }
@@ -82,8 +95,22 @@ void Application::run()
 
 void Application::finalize()
 {
-    LOG_DEBUG("Shutting down.");
+    LOG_INFO("Shutting down.");
     ImGui::SFML::Shutdown();
+}
+
+void Application::loadConfigDefaults()
+{
+    config.set("isRandom", true);
+    config.set("seed", 1234);
+    config.set("zoomMultiplier", 1.25f);
+    config.set("pointCount", 100000u);
+}
+
+void Application::loadConfigFromFile(const std::string& filename)
+{
+    auto configJson = Utils::loadTextFile(filename);
+    LOG_DEBUG(configJson);
 }
 
 void Application::processEvents()
@@ -91,24 +118,16 @@ void Application::processEvents()
     while (window->pollEvent(event))
     {
         ImGui::SFML::ProcessEvent(event);
+        viewController->processEvent(event);
+
         switch (event.type)
         {
-        case sf::Event::Closed:
-        {
-            window->close();
-            break;
-        }
-        case sf::Event::Resized:
-        {
-            viewController->onResize(event);
-            break;
-        }
-        case sf::Event::MouseWheelScrolled:
-        {
-            viewController->zoomOnScroll(event, config.get<float>("zoomMultiplier"));
-            break;
-        }
-        default: { break; }
+            case sf::Event::Closed:
+            {
+                window->close();
+                break;
+            }
+            default: { break; }
         }
     }
 }
@@ -130,6 +149,8 @@ void Application::updateGui()
     {
         viewController->resetView();
     }
+
+    ImGui::Text("Zoom: %f %", viewController->getCurrentZoomPercentage());
 
     ImGui::SliderFloat2("position", &translation, -1.0f, 1.0f);
     static float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };

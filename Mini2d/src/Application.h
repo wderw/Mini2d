@@ -22,7 +22,9 @@ public:
 private:
     void initialize();
     void finalize();
-    void loadConfig();
+    void loadConfig(const std::string& filename);
+    void loadConfigDefaults();
+    void loadConfigFromFile(const std::string& filename);
     void prepareRng();
     void setupWindow();
     void processEvents();
