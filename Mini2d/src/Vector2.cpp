@@ -2,9 +2,18 @@
 
 namespace mini2d
 {
-Vector2::Vector2() : x(0), y(0) {}
-Vector2::Vector2(const double nx, const double ny) : x(nx), y(ny) {}
-Vector2::Vector2(const Vector2& v) : x(v.x), y(v.y) {}
+
+Vector2::Vector2() : x{0}, y{0}
+{
+}
+
+Vector2::Vector2(const double nx, const double ny) : x{nx}, y{ny}
+{
+}
+
+Vector2::Vector2(const Vector2& v) : x{v.x}, y{v.y}
+{
+}
 
 Vector2& Vector2::operator=(const Vector2& v)
 {

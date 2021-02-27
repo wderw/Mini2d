@@ -150,7 +150,7 @@ void Application::updateGui()
         viewController->resetView();
     }
 
-    ImGui::Text("Zoom: %f %", viewController->getCurrentZoomPercentage());
+    ImGui::Text("Zoom: %f %", viewController->getCurrentZoom());
 
     ImGui::SliderFloat2("position", &translation, -1.0f, 1.0f);
     static float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
