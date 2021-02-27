@@ -20,7 +20,7 @@ void Application::initialize()
 
     prepareRng();
 
-    const int pointCount = config.get<unsigned>("pointCount");
+    const int pointCount = config.get<int>("pointCount");
     LOG_INFO("pointCount: {}", pointCount);
 
     vertices.reserve(pointCount);
@@ -63,9 +63,8 @@ void Application::setupWindow()
 
 void Application::loadConfig(const std::string& filename)
 {
-    loadConfigDefaults();
-
-    LOG_DEBUG("Current program path: {}", std::filesystem::current_path().string());
+    auto path = std::filesystem::current_path().string();
+    LOG_DEBUG("Current program path: {}", path);
     if (std::filesystem::exists(filename))
     {
         LOG_DEBUG("Config file found.");
@@ -73,7 +72,8 @@ void Application::loadConfig(const std::string& filename)
     }
     else
     {
-        LOG_WARN("Config file not found!");
+        LOG_WARN("Config file not found! Make sure {} is present in your directory: {}", filename, path);
+        loadConfigDefaults();
     }
 
     LOG_INFO("Config loaded.");
@@ -101,16 +101,24 @@ void Application::finalize()
 
 void Application::loadConfigDefaults()
 {
+    LOG_WARN("Loading default configuration.");
+
     config.set("isRandom", true);
     config.set("seed", 1234);
     config.set("zoomMultiplier", 1.25f);
-    config.set("pointCount", 100000u);
+    config.set("pointCount", 100000);
 }
 
 void Application::loadConfigFromFile(const std::string& filename)
 {
     auto configJson = Utils::loadTextFile(filename);
-    LOG_DEBUG(configJson);
+    auto parsedJson = Utils::parseJson(configJson);
+    LOG_DEBUG("Loaded config string: \n {}", configJson);
+
+    config.set("isRandom", parsedJson["isRandom"].bool_value());
+    config.set("seed", parsedJson["seed"].int_value());
+    config.set("zoomMultiplier", static_cast<float>(parsedJson["zoomMultiplier"].number_value()));
+    config.set("pointCount", parsedJson["pointCount"].int_value());
 }
 
 void Application::processEvents()

@@ -1,1 +1,6 @@
-pretend there is a config json here
+{
+  "isRandom":false,
+  "seed":3333,
+  "zoomMultiplier":1.25,
+  "pointCount":100000
+}
