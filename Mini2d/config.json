@@ -6,5 +6,6 @@
   "framerateLimit": 300,
   "clientWidth": 1440,
   "clientHeight": 900,
-  "antialiasingLevel": 0
+  "antialiasingLevel": 0,
+  "verticalSync": true
 }

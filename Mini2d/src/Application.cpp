@@ -59,12 +59,12 @@ void Application::setupWindow()
             glContextSettings
         );
 
-    window->setVerticalSyncEnabled(true);
+    window->setVerticalSyncEnabled(config.get<bool>("verticalSync"));
     window->setFramerateLimit(config.get<int>("framerateLimit"));
     window->setView(sf::View({ 0, 0, static_cast<float>(window->getSize().x),
                                     static_cast<float>(window->getSize().y) }));
 
-    viewController = std::make_shared<ViewController>(*window, config);
+    viewController = std::make_unique<ViewController>(*window, config);
     LOG_INFO("Window setup done.");
 }
 
@@ -120,6 +120,7 @@ void Application::loadConfigFromFile(const std::string& filename)
     config.set("clientWidth", parsedJson["clientWidth"].int_value());
     config.set("clientHeight", parsedJson["clientHeight"].int_value());
     config.set("antialiasingLevel", parsedJson["antialiasingLevel"].int_value());
+    config.set("verticalSync", parsedJson["verticalSync"].bool_value());
 }
 
 void Application::processEvents()
@@ -171,7 +172,7 @@ void Application::render()
     window->clear(bgColor);
 
     window->draw(shape);
-    window->draw(&vertices[0], vertices.size(), sf::Lines);
+    window->draw(&vertices[0], vertices.size(), sf::Points);
     ImGui::SFML::Render(*window); // Imgui must be the last rendered item!
 
     window->display();

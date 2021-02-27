@@ -30,12 +30,12 @@ private:
     void updateGui();
     void render();
 
-    std::shared_ptr<sf::RenderWindow> window;
+    std::unique_ptr<sf::RenderWindow> window;
     sf::ContextSettings glContextSettings;
     sf::Event event;
     sf::Clock deltaClock;
 
-    std::shared_ptr<ViewController> viewController;
+    std::unique_ptr<ViewController> viewController;
     sf::CircleShape shape{50.f};
     std::vector<sf::Vertex> vertices{};
     sf::Color bgColor{25, 25, 25, 255};
