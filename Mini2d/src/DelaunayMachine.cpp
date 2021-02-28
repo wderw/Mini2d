@@ -13,7 +13,23 @@ std::vector<sf::Vertex> DelaunayMachine::toSfVertices(std::vector<Vector2>& v)
     return result;
 }
 
-std::vector<Vector2> DelaunayMachine::prepareKdTreePoints()
+std::vector<Vector2> DelaunayMachine::prepareRandomKdTreePoints(int count)
+{
+    std::vector<Vector2> kdTreePoints{};
+    kdTreePoints.reserve(count);
+
+    for (int i = 0; i < count; ++i)
+    {
+        double quake = static_cast <double> (rand()) / static_cast <double> (RAND_MAX);
+        Vector2 v(rand() % (1440 - 120) + 60 + quake,
+            rand() % (900 - 120) + 60 + quake);
+        kdTreePoints.emplace_back(v);
+    }
+
+    return kdTreePoints;
+}
+
+std::vector<Vector2> DelaunayMachine::prepareKdTreeTestPoints()
 {
     std::vector<Vector2> kdTreePoints{};
     /* set 1

@@ -78,7 +78,7 @@ void Application::initialize()
     }
     */
 
-    // prepare vector
+    /* prepare vector
     std::vector<Vtx> vtxVec{};
     vtxVec.reserve(pointCount);
     for (int i = 0; i < pointCount; ++i)
@@ -100,9 +100,14 @@ void Application::initialize()
 
     auto AFL2 = std::unordered_set<Edge>(std::begin(edgeVec),
         std::end(edgeVec));
+    */
 
-    int badCounter = 0;
-    int coolCounter = 0;
+
+    // kdtree test begins here
+    auto kdPoints = delaunayMachine.prepareRandomKdTreePoints(config.get<int>("pointCount"));
+    vertices = DelaunayMachine::toSfVertices(kdPoints);    
+    Vector2 pivot{ -100, 650 };
+    KdTree kdTree(kdPoints);
 
     LARGE_INTEGER StartingTime, EndingTime, ElapsedMicroseconds;
     LARGE_INTEGER Frequency;
@@ -110,17 +115,21 @@ void Application::initialize()
     QueryPerformanceCounter(&StartingTime);
 
     // do sth
-    AFL2.find(edgeVec[96123]);
+   
+
+    Vector2 solution;
+    //solution = delaunayMachine.findLinear(kdPoints, pivot);
+    solution = kdTree.findClosest(pivot);
+    
 
     QueryPerformanceCounter(&EndingTime);
     ElapsedMicroseconds.QuadPart = EndingTime.QuadPart - StartingTime.QuadPart;
     ElapsedMicroseconds.QuadPart *= 1000000;
     ElapsedMicroseconds.QuadPart /= Frequency.QuadPart;
 
-    LOG_WARN("coolCounter: {}", coolCounter);
-    LOG_WARN("badCounter: {}", badCounter);
-    LOG_WARN("Elapsed us: {}", ElapsedMicroseconds.QuadPart);
-    LOG_WARN("Elapsed ms: {}", ElapsedMicroseconds.QuadPart / 1000);
+    LOG_DEBUG("solution: {}", solution);
+    LOG_DEBUG("Elapsed us: {}", ElapsedMicroseconds.QuadPart);
+    LOG_DEBUG("Elapsed ms: {}", ElapsedMicroseconds.QuadPart / 1000);
 
     /*
     vertices.reserve(pointCount);
@@ -132,16 +141,6 @@ void Application::initialize()
         vertices.emplace_back(v);
     }
     */
-
-    auto kdPoints = delaunayMachine.prepareKdTreePoints();
-    vertices = DelaunayMachine::toSfVertices(kdPoints);
-    vertices.emplace_back(sf::Vertex{sf::Vector2f{140, 90}});
-    vertices[11].color = sf::Color::Green;
-
-    KdTree kdTree(kdPoints);
-    kdTree.print();
-    Vector2 pivot{ 140, 90 };
-    kdTree.findClosest(pivot);
 }
 
 void Application::prepareRng()

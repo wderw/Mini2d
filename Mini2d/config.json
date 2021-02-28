@@ -1,8 +1,8 @@
 {
-  "isRandom": false,
+  "isRandom": true,
   "seed": 3333,
   "zoomMultiplier": 1.25,
-  "pointCount": 100000,
+  "pointCount": 1000000,
   "framerateLimit": 300,
   "clientWidth": 1440,
   "clientHeight": 900,
