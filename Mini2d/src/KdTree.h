@@ -18,7 +18,7 @@ class KdTree
 public:
     KdTree(std::vector<Vector2>& input);
     void print() const;
-    void findClosest(const Vector2& point);
+    Vector2 findClosest(const Vector2& point);
 
 
 private:

@@ -35,10 +35,10 @@ void KdTree::printNode(std::shared_ptr<KdNode> node, int depth = 0) const
     printNode(node->right, depth + 1);
 }
 
-void KdTree::findClosest(const Vector2& point)
+Vector2 KdTree::findClosest(const Vector2& point)
 {
-    auto result = kdTreeClosestPoint(root, point, 0);
-    LOG_DEBUG("Closest is: {}", result->point);
+    return kdTreeClosestPoint(root, point, 0)->point;
+    //LOG_DEBUG("Closest is: {}", result->point);
 }
 
 std::shared_ptr<KdNode> KdTree::kdTreeClosestPoint(std::shared_ptr<KdNode> node, const Vector2& point, int depth = 0)
