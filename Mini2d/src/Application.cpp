@@ -106,7 +106,7 @@ void Application::initialize()
     // kdtree test begins here
     auto kdPoints = delaunayMachine.prepareRandomKdTreePoints(config.get<int>("pointCount"));
     vertices = DelaunayMachine::toSfVertices(kdPoints);    
-    Vector2 pivot{ -100, 650 };
+    Vector2 pivot{ 250, 650 };
     KdTree kdTree(kdPoints);
 
 
