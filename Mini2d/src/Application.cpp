@@ -109,6 +109,7 @@ void Application::initialize()
     Vector2 pivot{ -100, 650 };
     KdTree kdTree(kdPoints);
 
+
     LARGE_INTEGER StartingTime, EndingTime, ElapsedMicroseconds;
     LARGE_INTEGER Frequency;
     QueryPerformanceFrequency(&Frequency);
@@ -116,10 +117,10 @@ void Application::initialize()
 
     // do sth
    
-
     Vector2 solution;
     //solution = delaunayMachine.findLinear(kdPoints, pivot);
     solution = kdTree.findClosest(pivot);
+
     
 
     QueryPerformanceCounter(&EndingTime);
