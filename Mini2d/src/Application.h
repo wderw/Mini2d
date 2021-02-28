@@ -9,6 +9,7 @@
 #include <imgui.h>
 #include <imgui-SFML.h>
 #include "ViewController.h"
+#include "DelaunayMachine.h"
 #include "Config.h"
 
 namespace mini2d
@@ -34,6 +35,7 @@ private:
     sf::ContextSettings glContextSettings;
     sf::Event event;
     sf::Clock deltaClock;
+    DelaunayMachine delaunayMachine;
 
     std::unique_ptr<ViewController> viewController;
     sf::CircleShape shape{50.f};

@@ -86,6 +86,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\KdTree.cpp" />
     <ClCompile Include="src\DelaunayMachine.cpp" />
     <ClCompile Include="libraries\imgui-1.81\imgui.cpp" />
     <ClCompile Include="libraries\imgui-1.81\imgui_demo.cpp" />
@@ -101,6 +102,7 @@
     <ClCompile Include="src\ViewController.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\KdTree.h" />
     <ClInclude Include="src\DelaunayMachine.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Config.h" />

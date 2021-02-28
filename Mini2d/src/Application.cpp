@@ -1,10 +1,53 @@
 #include <fstream>
 #include <sstream>
 #include <filesystem>
+#include <unordered_set>
 #include "Application.h"
 #include "Logger.h"
 #include "Config.h"
 #include "Utils.h"
+#include "Vector2.h"
+#include "KdTree.h"
+
+
+struct Vtx
+{
+    mini2d::Vector2 v;
+    int index;
+};
+
+struct Edge
+{
+    Vtx v1;
+    Vtx v2;
+};
+
+bool operator==(const Edge& lhs, const Edge& rhs)
+{
+    return (lhs.v1.index == rhs.v1.index and lhs.v2.index == rhs.v2.index) or
+           (lhs.v1.index == rhs.v2.index and lhs.v2.index == rhs.v1.index);
+}
+
+bool operator==(const Vtx& lhs, const Vtx& rhs)
+{
+    return lhs.index == rhs.index;
+}
+
+template<>
+struct std::hash<Vtx> {
+    std::size_t operator()(const Vtx& v) const
+    {
+        return std::hash<int>{}(v.index);
+    }
+};
+
+template<>
+struct std::hash<Edge> {
+    std::size_t operator()(const Edge& e) const
+    {
+        return std::hash<int>{}(e.v1.index + e.v2.index);
+    }
+};
 
 namespace mini2d
 {
@@ -23,6 +66,8 @@ void Application::initialize()
     const int pointCount = config.get<int>("pointCount");
     LOG_INFO("pointCount: {}", pointCount);
 
+    // THE BIG SET/UNORDERED SET TEST
+    /*
     vertices.reserve(pointCount);
     for (int i = 0; i < pointCount; ++i)
     {
@@ -31,6 +76,72 @@ void Application::initialize()
             rand() % ((int)window->getSize().y - 120) + 60 + quake), sf::Color(rand() % 255, rand() % 255, rand() % 255, 255));
         vertices.emplace_back(v);
     }
+    */
+
+    // prepare vector
+    std::vector<Vtx> vtxVec{};
+    vtxVec.reserve(pointCount);
+    for (int i = 0; i < pointCount; ++i)
+    {
+        double quake = static_cast <double> (rand()) / static_cast <double> (RAND_MAX);
+        Vtx v{ Vector2(rand() % ((int)window->getSize().x - 120) + 60 + quake,
+                      rand() % ((int)window->getSize().y - 120) + 60 + quake), i };
+        vtxVec.emplace_back(v);
+    }
+
+    std::vector<Edge> edgeVec{};
+    for (int i = 0; i < pointCount; ++i)
+    {
+        Edge e{ vtxVec[rand() % pointCount], vtxVec[rand() % pointCount] };
+        edgeVec.emplace_back(e);
+    }
+    auto AFL = std::unordered_set<Vtx>(std::begin(vtxVec),
+        std::end(vtxVec));
+
+    auto AFL2 = std::unordered_set<Edge>(std::begin(edgeVec),
+        std::end(edgeVec));
+
+    int badCounter = 0;
+    int coolCounter = 0;
+
+    LARGE_INTEGER StartingTime, EndingTime, ElapsedMicroseconds;
+    LARGE_INTEGER Frequency;
+    QueryPerformanceFrequency(&Frequency);
+    QueryPerformanceCounter(&StartingTime);
+
+    // do sth
+    AFL2.find(edgeVec[96123]);
+
+    QueryPerformanceCounter(&EndingTime);
+    ElapsedMicroseconds.QuadPart = EndingTime.QuadPart - StartingTime.QuadPart;
+    ElapsedMicroseconds.QuadPart *= 1000000;
+    ElapsedMicroseconds.QuadPart /= Frequency.QuadPart;
+
+    LOG_WARN("coolCounter: {}", coolCounter);
+    LOG_WARN("badCounter: {}", badCounter);
+    LOG_WARN("Elapsed us: {}", ElapsedMicroseconds.QuadPart);
+    LOG_WARN("Elapsed ms: {}", ElapsedMicroseconds.QuadPart / 1000);
+
+    /*
+    vertices.reserve(pointCount);
+    for (int i = 0; i < pointCount; ++i)
+    {
+        double quake = static_cast <double> (rand()) / static_cast <double> (RAND_MAX);
+        sf::Vertex v(sf::Vector2f(rand() % ((int)window->getSize().x - 120) + 60 + quake,
+            rand() % ((int)window->getSize().y - 120) + 60 + quake), sf::Color(rand() % 255, rand() % 255, rand() % 255, 255));
+        vertices.emplace_back(v);
+    }
+    */
+
+    auto kdPoints = delaunayMachine.prepareKdTreePoints();
+    vertices = DelaunayMachine::toSfVertices(kdPoints);
+    vertices.emplace_back(sf::Vertex{sf::Vector2f{140, 90}});
+    vertices[11].color = sf::Color::Green;
+
+    KdTree kdTree(kdPoints);
+    kdTree.print();
+    Vector2 pivot{ 140, 90 };
+    kdTree.findClosest(pivot);
 }
 
 void Application::prepareRng()
@@ -172,7 +283,7 @@ void Application::render()
 {
     window->clear(bgColor);
 
-    window->draw(shape);
+    //window->draw(shape);
     window->draw(&vertices[0], vertices.size(), sf::Points);
     ImGui::SFML::Render(*window); // Imgui must be the last rendered item!
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include "Logger.h"
 
 namespace mini2d
 {
@@ -38,3 +39,29 @@ public:
     double x, y;
 };
 }
+
+template <>
+struct fmt::formatter<mini2d::Vector2>
+{
+    char presentation = 'f';
+
+    constexpr auto parse(format_parse_context& ctx)
+    {
+        auto it = ctx.begin(), end = ctx.end();
+        if (it != end && (*it == 'f' || *it == 'e')) presentation = *it++;
+
+        if (it != end && *it != '}')
+            throw format_error("invalid format");
+
+        return it;
+    }
+
+    template <typename FormatContext>
+    auto format(const mini2d::Vector2& p, FormatContext& ctx)
+    {
+        return format_to(
+            ctx.out(),
+            presentation == 'f' ? "({:.1f}, {:.1f})" : "({:.1e}, {:.1e})",
+            p.x, p.y);
+    }
+};
