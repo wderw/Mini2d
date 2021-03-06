@@ -7,47 +7,6 @@
 #include "Config.h"
 #include "Utils.h"
 #include "Vector2.h"
-#include "KdTree.h"
-
-
-struct Vtx
-{
-    mini2d::Vector2 v;
-    int index;
-};
-
-struct Edge
-{
-    Vtx v1;
-    Vtx v2;
-};
-
-bool operator==(const Edge& lhs, const Edge& rhs)
-{
-    return (lhs.v1.index == rhs.v1.index and lhs.v2.index == rhs.v2.index) or
-           (lhs.v1.index == rhs.v2.index and lhs.v2.index == rhs.v1.index);
-}
-
-bool operator==(const Vtx& lhs, const Vtx& rhs)
-{
-    return lhs.index == rhs.index;
-}
-
-template<>
-struct std::hash<Vtx> {
-    std::size_t operator()(const Vtx& v) const
-    {
-        return std::hash<int>{}(v.index);
-    }
-};
-
-template<>
-struct std::hash<Edge> {
-    std::size_t operator()(const Edge& e) const
-    {
-        return std::hash<int>{}(e.v1.index + e.v2.index);
-    }
-};
 
 namespace mini2d
 {
@@ -65,19 +24,10 @@ void Application::initialize()
 
     const int pointCount = config.get<int>("pointCount");
     LOG_INFO("pointCount: {}", pointCount);
+}
 
-    // THE BIG SET/UNORDERED SET TEST
-    /*
-    vertices.reserve(pointCount);
-    for (int i = 0; i < pointCount; ++i)
-    {
-        double quake = static_cast <double> (rand()) / static_cast <double> (RAND_MAX);
-        sf::Vertex v(sf::Vector2f(rand() % ((int)window->getSize().x - 120) + 60 + quake,
-            rand() % ((int)window->getSize().y - 120) + 60 + quake), sf::Color(rand() % 255, rand() % 255, rand() % 255, 255));
-        vertices.emplace_back(v);
-    }
-    */
-
+void Application::performMeasurementsAndTriangulation()
+{
     /* prepare vector
     std::vector<Vtx> vtxVec{};
     vtxVec.reserve(pointCount);
@@ -103,22 +53,22 @@ void Application::initialize()
     */
 
 
-    // kdtree test begins here
-    auto kdPoints = delaunayMachine.prepareRandomKdTreePoints(config.get<int>("pointCount"));
+    // kdtree test begins here    
+    auto kdPoints = DelaunayMachine::prepareRandomKdTreePoints(config.get<int>("pointCount"));
     //auto kdPoints = delaunayMachine.prepareKdTreeTestPoints();
+
+    delaunayMachine = std::make_unique<DelaunayMachine>(kdPoints);
     vertices = DelaunayMachine::toSfVertices(kdPoints);
 
-    KdTree kdTree(kdPoints);
-    
     LARGE_INTEGER StartingTime, EndingTime, ElapsedMicroseconds;
     LARGE_INTEGER Frequency;
     QueryPerformanceFrequency(&Frequency);
     QueryPerformanceCounter(&StartingTime);
 
     // do sth
-    Vector2 solution;
-    //solution = delaunayMachine.findLinear(kdPoints, kdPoints[1]);
-    solution = kdTree.findClosest(kdPoints[1]);
+    Vtx solution;
+    //solution = delaunayMachine->findLinear(kdPoints, kdPoints[1]);
+    solution = delaunayMachine->findClosest(kdPoints[1]);
 
 
     QueryPerformanceCounter(&EndingTime);
@@ -126,22 +76,9 @@ void Application::initialize()
     ElapsedMicroseconds.QuadPart *= 1000000;
     ElapsedMicroseconds.QuadPart /= Frequency.QuadPart;
 
-
-
-    LOG_DEBUG("solution: {}", solution);
+    LOG_DEBUG("solution: {}", solution.v);
     LOG_DEBUG("Elapsed us: {}", ElapsedMicroseconds.QuadPart);
     LOG_DEBUG("Elapsed ms: {}", ElapsedMicroseconds.QuadPart / 1000);
-
-    /*
-    vertices.reserve(pointCount);
-    for (int i = 0; i < pointCount; ++i)
-    {
-        double quake = static_cast <double> (rand()) / static_cast <double> (RAND_MAX);
-        sf::Vertex v(sf::Vector2f(rand() % ((int)window->getSize().x - 120) + 60 + quake,
-            rand() % ((int)window->getSize().y - 120) + 60 + quake), sf::Color(rand() % 255, rand() % 255, rand() % 255, 255));
-        vertices.emplace_back(v);
-    }
-    */
 }
 
 void Application::prepareRng()
@@ -201,6 +138,7 @@ void Application::loadConfig(const std::string& filename)
 void Application::run()
 {
     initialize();
+    performMeasurementsAndTriangulation();
 
     while (window->isOpen())
     {

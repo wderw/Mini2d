@@ -2,13 +2,13 @@
 
 #include <vector>
 #include <memory>
-#include "Vector2.h"
+#include "Vtx.h"
 
 namespace mini2d
 {
 struct KdNode
 {
-    Vector2 point;
+    Vtx point;
     std::shared_ptr<KdNode> left;
     std::shared_ptr<KdNode> right;
 };
@@ -16,18 +16,18 @@ struct KdNode
 class KdTree
 {
 public:
-    KdTree(std::vector<Vector2>& input);
+    KdTree(const std::vector<Vtx>& input);
     void print() const;
-    Vector2 findClosest(const Vector2& point);
+    Vtx findClosest(const Vtx& point);
 
 
 private:
-    std::shared_ptr<KdNode> kdTreeClosestPoint(std::shared_ptr<KdNode>, const Vector2&, int);
-    std::shared_ptr<KdNode> closerDistance(const Vector2& pivot, std::shared_ptr<KdNode> p1, std::shared_ptr<KdNode> p2);
+    std::shared_ptr<KdNode> kdTreeClosestPoint(std::shared_ptr<KdNode>, const Vtx&, int);
+    std::shared_ptr<KdNode> closerDistance(const Vtx& pivot, std::shared_ptr<KdNode> p1, std::shared_ptr<KdNode> p2);
     void printNode(std::shared_ptr<KdNode>, int) const;
-    std::shared_ptr<KdNode> build(std::vector<Vector2>, int);
+    std::shared_ptr<KdNode> build(std::vector<Vtx>, int);
 
-    std::vector<Vector2>& input;
+    const std::vector<Vtx>& input;
     std::shared_ptr<KdNode> root{nullptr};
 };
 }

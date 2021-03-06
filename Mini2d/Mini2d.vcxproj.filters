@@ -49,6 +49,12 @@
     <ClCompile Include="src\KdTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Vtx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Edge.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h">
@@ -63,6 +69,8 @@
     <ClInclude Include="src\ViewController.h" />
     <ClInclude Include="src\DelaunayMachine.h" />
     <ClInclude Include="src\KdTree.h" />
+    <ClInclude Include="src\Vtx.h" />
+    <ClInclude Include="src\Edge.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config.json" />

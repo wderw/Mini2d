@@ -4,7 +4,7 @@
 
 namespace mini2d
 {
-KdTree::KdTree(std::vector<Vector2>& input) : input{input}
+KdTree::KdTree(const std::vector<Vtx>& input) : input{input}
 {
     root = build(input, 0);
 }
@@ -29,19 +29,18 @@ void KdTree::printNode(std::shared_ptr<KdNode> node, int depth = 0) const
     LOG_DEBUG("{} left: ", depthIndent);
     printNode(node->left, depth + 1);
 
-    LOG_DEBUG("{} point: {}", depthIndent, node->point);
+    LOG_DEBUG("{} point: {}", depthIndent, node->point.v);
 
     LOG_DEBUG("{} right: ", depthIndent);
     printNode(node->right, depth + 1);
 }
 
-Vector2 KdTree::findClosest(const Vector2& point)
+Vtx KdTree::findClosest(const Vtx& point)
 {
     return kdTreeClosestPoint(root, point, 0)->point;
-    //LOG_DEBUG("Closest is: {}", result->point);
 }
 
-std::shared_ptr<KdNode> KdTree::kdTreeClosestPoint(std::shared_ptr<KdNode> node, const Vector2& point, int depth = 0)
+std::shared_ptr<KdNode> KdTree::kdTreeClosestPoint(std::shared_ptr<KdNode> node, const Vtx& point, int depth = 0)
 {
     if (node == nullptr)
         return nullptr;
@@ -51,8 +50,8 @@ std::shared_ptr<KdNode> KdTree::kdTreeClosestPoint(std::shared_ptr<KdNode> node,
     std::shared_ptr<KdNode> nextBranch = nullptr;
     std::shared_ptr<KdNode> oppositeBranch = nullptr;
 
-    auto testedPointCoordinate = axis == 0 ? point.x : point.y;
-    auto testedNodeCoordinate = axis == 0 ? node->point.x : node->point.y;
+    auto testedPointCoordinate = axis == 0 ? point.v.x : point.v.y;
+    auto testedNodeCoordinate = axis == 0 ? node->point.v.x : node->point.v.y;
 
     if (testedPointCoordinate < testedNodeCoordinate)
     {
@@ -67,8 +66,8 @@ std::shared_ptr<KdNode> KdTree::kdTreeClosestPoint(std::shared_ptr<KdNode> node,
 
     auto best = closerDistance(point, kdTreeClosestPoint(nextBranch, point, depth + 1), node);
 
-    auto distanceToSplittingPlane = axis == 0 ? (point.x - node->point.x) : (point.y - node->point.y);
-    if (point.distanceTo(best->point) > abs(distanceToSplittingPlane))
+    auto distanceToSplittingPlane = axis == 0 ? (point.v.x - node->point.v.x) : (point.v.y - node->point.v.y);
+    if (point.v.distanceTo(best->point.v) > abs(distanceToSplittingPlane))
     {
         best = closerDistance(point, kdTreeClosestPoint(oppositeBranch, point, depth + 1), best);
     }
@@ -76,13 +75,13 @@ std::shared_ptr<KdNode> KdTree::kdTreeClosestPoint(std::shared_ptr<KdNode> node,
     return best;
 }
 
-std::shared_ptr<KdNode> KdTree::closerDistance(const Vector2& pivot, std::shared_ptr<KdNode> p1, std::shared_ptr<KdNode> p2)
+std::shared_ptr<KdNode> KdTree::closerDistance(const Vtx& pivot, std::shared_ptr<KdNode> p1, std::shared_ptr<KdNode> p2)
 {
     if (p1 == nullptr) return p2;
     if (p2 == nullptr) return p1;
 
-    double d1 = pivot.distanceTo(p1->point);
-    double d2 = pivot.distanceTo(p2->point);
+    double d1 = pivot.v.distanceTo(p1->point.v);
+    double d2 = pivot.v.distanceTo(p2->point.v);
 
     if (d2 == 0) return p1;
     if (d1 == 0) return p2;
@@ -97,7 +96,7 @@ std::shared_ptr<KdNode> KdTree::closerDistance(const Vector2& pivot, std::shared
     }
 }
 
-std::shared_ptr<KdNode> KdTree::build(std::vector<Vector2> points, int depth = 0)
+std::shared_ptr<KdNode> KdTree::build(std::vector<Vtx> points, int depth = 0)
 {
     int n = points.size();
 
@@ -106,15 +105,15 @@ std::shared_ptr<KdNode> KdTree::build(std::vector<Vector2> points, int depth = 0
 
     int axis = depth % 2;
 
-    auto comparator = [axis](const Vector2& lhs, const Vector2& rhs)
+    auto comparator = [axis](const Vtx& lhs, const Vtx& rhs)
     {
-        return axis == 0 ? (lhs.x < rhs.x) : (lhs.y < rhs.y);
+        return axis == 0 ? (lhs.v.x < rhs.v.x) : (lhs.v.y < rhs.v.y);
     };
     std::sort(std::begin(points), std::end(points), comparator);
 
     std::size_t const mid = points.size() / 2;
-    std::vector<Vector2> splitLeft(points.begin(), points.begin() + mid);
-    std::vector<Vector2> splitRight(points.begin() + mid + 1, points.end());
+    std::vector<Vtx> splitLeft(points.begin(), points.begin() + mid);
+    std::vector<Vtx> splitRight(points.begin() + mid + 1, points.end());
 
     std::shared_ptr<KdNode> kdNode = std::make_shared<KdNode>();
     kdNode->point = points[mid];

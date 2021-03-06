@@ -86,6 +86,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Edge.cpp" />
     <ClCompile Include="src\KdTree.cpp" />
     <ClCompile Include="src\DelaunayMachine.cpp" />
     <ClCompile Include="libraries\imgui-1.81\imgui.cpp" />
@@ -100,8 +101,10 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Vector2.cpp" />
     <ClCompile Include="src\ViewController.cpp" />
+    <ClCompile Include="src\Vtx.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Edge.h" />
     <ClInclude Include="src\KdTree.h" />
     <ClInclude Include="src\DelaunayMachine.h" />
     <ClInclude Include="src\Application.h" />
@@ -110,6 +113,7 @@
     <ClInclude Include="src\Utils.h" />
     <ClInclude Include="src\Vector2.h" />
     <ClInclude Include="src\ViewController.h" />
+    <ClInclude Include="src\Vtx.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config.json" />

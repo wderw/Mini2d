@@ -31,11 +31,13 @@ private:
     void updateGui();
     void render();
 
+    void performMeasurementsAndTriangulation();
+
     std::unique_ptr<sf::RenderWindow> window;
     sf::ContextSettings glContextSettings;
     sf::Event event;
     sf::Clock deltaClock;
-    DelaunayMachine delaunayMachine;
+    std::unique_ptr<DelaunayMachine> delaunayMachine;
 
     std::unique_ptr<ViewController> viewController;
     sf::CircleShape shape{50.f};
