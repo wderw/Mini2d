@@ -54,6 +54,7 @@ std::vector<Vector2> DelaunayMachine::prepareKdTreeTestPoints()
     kdTreePoints.emplace_back(Vector2{ 140, 110 });
     kdTreePoints.emplace_back(Vector2{ 150, 30 });
     kdTreePoints.emplace_back(Vector2{ 160, 100 });
+    kdTreePoints.emplace_back(Vector2{ 190, 150 });    
 
     return kdTreePoints;
 }

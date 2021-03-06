@@ -84,6 +84,9 @@ std::shared_ptr<KdNode> KdTree::closerDistance(const Vector2& pivot, std::shared
     double d1 = pivot.distanceTo(p1->point);
     double d2 = pivot.distanceTo(p2->point);
 
+    if (d2 == 0) return p1;
+    if (d1 == 0) return p2;
+
     if (d1 < d2)
     {
         return p1;

@@ -105,28 +105,28 @@ void Application::initialize()
 
     // kdtree test begins here
     auto kdPoints = delaunayMachine.prepareRandomKdTreePoints(config.get<int>("pointCount"));
-    vertices = DelaunayMachine::toSfVertices(kdPoints);    
-    Vector2 pivot{ 250, 650 };
+    //auto kdPoints = delaunayMachine.prepareKdTreeTestPoints();
+    vertices = DelaunayMachine::toSfVertices(kdPoints);
+
     KdTree kdTree(kdPoints);
-
-
+    
     LARGE_INTEGER StartingTime, EndingTime, ElapsedMicroseconds;
     LARGE_INTEGER Frequency;
     QueryPerformanceFrequency(&Frequency);
     QueryPerformanceCounter(&StartingTime);
 
     // do sth
-   
     Vector2 solution;
-    //solution = delaunayMachine.findLinear(kdPoints, pivot);
-    solution = kdTree.findClosest(pivot);
+    //solution = delaunayMachine.findLinear(kdPoints, kdPoints[1]);
+    solution = kdTree.findClosest(kdPoints[1]);
 
-    
 
     QueryPerformanceCounter(&EndingTime);
     ElapsedMicroseconds.QuadPart = EndingTime.QuadPart - StartingTime.QuadPart;
     ElapsedMicroseconds.QuadPart *= 1000000;
     ElapsedMicroseconds.QuadPart /= Frequency.QuadPart;
+
+
 
     LOG_DEBUG("solution: {}", solution);
     LOG_DEBUG("Elapsed us: {}", ElapsedMicroseconds.QuadPart);
